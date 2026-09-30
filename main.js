@@ -1,4 +1,5 @@
 import { Game } from './game.js';
+import { setupInput } from './input.js';
 
 const board = document.getElementById('game-board');
 
@@ -28,6 +29,8 @@ const Render = () => {
         cell.classList.remove('snake', 'head', 'food');
     }
 
+    // Snake
+
     game.snake
         .getBody()
         .forEach(
@@ -54,8 +57,16 @@ const Render = () => {
             }
         );
 
+    if (game.food) {
+        const foodCell = board.querySelector(
+            `[data-x="${game.food.x}"][data-y="${game.food.y}"]`
+        );
 
-}
+        if (foodCell) {
+            foodCell.classList.add("food");
+        }
+    }
+};
 
 const startGame = () => {
     clearInterval(interval);
@@ -65,17 +76,8 @@ const startGame = () => {
     createBoard();
 
     Render();
-    clearInterval(interval);
 
-   
-    game = new Game();
-
-   
-    createBoard();
-    
-    Render();
-
-    interval = setInterval(() => {
+    interval = setInterval(() => { // intervals matlab yek block of code repeat ho baar baar repaet hoga ans render is built function which disply the block of code
             game.update();
             Render();
 
@@ -88,6 +90,14 @@ const startGame = () => {
         },
 
         game.speed
+    );
+    setupInput(direction => {
+
+            game.setDirection(
+                direction
+            );
+
+        }
     );
 
 }
