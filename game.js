@@ -1,5 +1,6 @@
 import { Snake } from './snake.js';
 import { createFood } from './food.js';
+import { wallCollision, bodyCollision, foodCollision } from './collision.js';
 
 export class Game {
 
@@ -35,7 +36,7 @@ export class Game {
         };
 
         // Prevent snake from moving directly backward
-        if (opposite[this.direction] === direction) {
+        if (opposite[this.direction] === direction || opposite[this.nextDirection] === direction) {
             return;
         }
 
@@ -81,9 +82,25 @@ export class Game {
             x: head.x + movement[this.direction].x,
             y: head.y + movement[this.direction].y
         };
-        
+
+        if (
+            wallCollision(newHead, this.rows, this.columns) ||
+            bodyCollision(newHead, this.snake.getBody())
+        ) {
+            this.running = false;
+            return;
+        }
 
         this.snake.move(newHead);
+
+        if (foodCollision(newHead, this.food)) {
+            this.food = createFood(
+                this.snake.getBody(),
+                this.rows,
+                this.columns
+            );
+            return;
+        }
 
         this.snake.removeTail();
     }
